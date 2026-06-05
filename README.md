@@ -1,1 +1,3 @@
-# Incidencia-
+Pago-Service (puerto 8084, apr_pago_db)
+Responsabilidad: Registrar pagos. Orquesta validaciones con Socio y Facturacion, y actualiza el estado de la factura a PAGADA. Entidad: Pago { id, socioId, facturaId, montoPagado, medioPago, comprobante, fechaPago } Controller: PagoController — GET con filtros (socioId, facturaId), POST, PUT, DELETE Service: PagoService — guardar(), actualizar(), eliminar(), validarSocioEnSocioService(), obtenerFacturaDeFacturacionService(), actualizarEstadoFactura() Repository: PagoRepository — custom: findBySocioId(), findByFacturaId() DTOs: PagoDTO, PagoResponseDTO Dependencias externas: Socio-Service (GET /socios/{id}) + Facturacion-Service (GET /facturas/{id}, PUT /facturas/{id}) Tabla BD: pagos
+

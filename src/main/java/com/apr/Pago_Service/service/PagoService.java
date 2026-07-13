@@ -18,11 +18,13 @@ import java.util.Map;
 public class PagoService {
 
     private final PagoRepository repository;
-    private final WebClient.Builder webClientBuilder;
+    private final WebClient socioWebClient;
+    private final WebClient facturacionWebClient;
 
-    public PagoService(PagoRepository repository, WebClient.Builder webClientBuilder) {
+    public PagoService(PagoRepository repository, WebClient socioWebClient, WebClient facturacionWebClient) {
         this.repository = repository;
-        this.webClientBuilder = webClientBuilder;
+        this.socioWebClient = socioWebClient;
+        this.facturacionWebClient = facturacionWebClient;
     }
 
     public List<PagoResponseDTO> listarTodos() {
@@ -99,8 +101,8 @@ public class PagoService {
 
     private void validarSocioEnSocioService(Long socioId) {
         try {
-            Boolean existe = webClientBuilder.build().get()
-                    .uri("http://socio-service/socios/" + socioId)
+            Boolean existe = socioWebClient.get()
+                    .uri("/socios/" + socioId)
                     .retrieve()
                     .toBodilessEntity()
                     .map(response -> response.getStatusCode().is2xxSuccessful())
@@ -118,8 +120,8 @@ public class PagoService {
     @SuppressWarnings("unchecked")
     private Map<String, Object> obtenerFacturaDeFacturacionService(Long facturaId) {
         try {
-            Map<String, Object> factura = webClientBuilder.build().get()
-                    .uri("http://facturacion-service/facturas/" + facturaId)
+            Map<String, Object> factura = facturacionWebClient.get()
+                    .uri("/facturas/" + facturaId)
                     .retrieve()
                     .bodyToMono(Map.class)
                     .block();
@@ -138,8 +140,8 @@ public class PagoService {
             Map<String, Object> requestBody = new HashMap<>(facturaOriginal);
             requestBody.put("estado", "PAGADA");
 
-            webClientBuilder.build().put()
-                    .uri("http://facturacion-service/facturas/" + facturaId)
+            facturacionWebClient.put()
+                    .uri("/facturas/" + facturaId)
                     .bodyValue(requestBody)
                     .retrieve()
                     .toBodilessEntity()
